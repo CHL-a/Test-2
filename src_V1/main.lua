@@ -4,11 +4,8 @@ local WebServer = require('WebServer')
 	.new()
 local cURL = require('cURL')
 
+local test = false
 
--- sample:
--- let our domain be `https://google.com`
-
--- client sent http request to home, being `google.com`
 WebServer.onRequest('/foo', 'GET', function (client, req, res)
 	res.success = true
 	res.statusCode = 200
@@ -31,12 +28,17 @@ end)
 	res.headers.connection = 'close'
 	res.body = 'bad request idk'
 
+	if not test then
+		test = true
+		print('baa')
+		cURL.get('https://Test-2.0x2.repl.co/foo', '', {
+			['X-FOO'] = 'bar'
+		})
+		
+		
+	end
 end)
 
 -- always last step
 	.launch()
-
-print('baa')
-cURL.get('https://Test-2.0x2.repl.co/foo', '', {
-	['X-FOO'] = 'bar'
-})
+-- wtf why is coroutines not working here
