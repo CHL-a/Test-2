@@ -31,9 +31,10 @@ end)
 	if not test then
 		test = true
 		print('baa')
-		cURL.get('https://Test-2.0x2.repl.co/foo', '', {
+		print(cURL.get('https://test-2.0x2.repl.co/foo', nil, {
 			['X-FOO'] = 'bar'
-		})
+			}))
+		print'baad'
 	end
 end)
 
