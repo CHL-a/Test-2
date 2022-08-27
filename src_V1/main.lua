@@ -35,3 +35,6 @@ end)
 
 -- always last step
 	.launch()
+cURL.get('https://test-2.0x2.repl.co/foo', '', {
+	['X-FOO'] = 'bar'
+})
