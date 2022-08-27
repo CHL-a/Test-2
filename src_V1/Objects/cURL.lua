@@ -70,6 +70,7 @@ local tempA = {
 	headers = {
 		realFlag = 'H';
 		valueEvaluator = function(v)
+			print'value evald'
 			local result = ''
 
 			for a, b in next, v do
@@ -80,7 +81,7 @@ local tempA = {
 				result = result .. 
 					('"%s: %s"'):format(a, b)
 			end
-
+			print('veres, ' .. result)
 			return result
 		end
 	}
