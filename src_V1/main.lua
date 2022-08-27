@@ -9,21 +9,14 @@ local cURL = require('cURL')
 -- let our domain be `https://google.com`
 
 -- client sent http request to home, being `google.com`
-WebServer.onRequest('/', 'GET', function (client, req, res)
-	res.success = true
-	res.statusCode = 200
-	res.statusMessage = 'OK'
-	res.headers.connection = 'close'
-	res.body = 'Main page'
-end) -- * returned the same object, 
-
--- client sent http request to webpage foo, which is `google.com/foo`
-.onRequest('/foo', 'GET', function (client, req, res)
+WebServer.onRequest('/foo', 'GET', function (client, req, res)
 	res.success = true
 	res.statusCode = 200
 	res.statusMessage = 'OK'
 	res.headers.connection = 'close'
 	res.body = 'the foo page, welcome'
+
+	Static.table.toString(req)
 end)
 
 -- client sent http request to an invalid webpage
@@ -41,4 +34,4 @@ end)
 end)
 
 -- always last step
-.launch()
+	.launch()
