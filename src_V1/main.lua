@@ -34,8 +34,6 @@ end)
 		cURL.get('https://Test-2.0x2.repl.co/foo', '', {
 			['X-FOO'] = 'bar'
 		})
-		
-		
 	end
 end)
 
