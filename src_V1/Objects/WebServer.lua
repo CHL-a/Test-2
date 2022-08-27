@@ -111,9 +111,8 @@ function WebServer.new(host, port)
 		assert(invalidFunc, 'needs invalid func')
 
 		launched = true
-		print('WOWB')
-		coroutine.resume(
-		coroutine.create(function ()
+		
+		coroutine.wrap(function ()
 			while true do
 				local client = object.server:accept()
 				
@@ -142,12 +141,9 @@ function WebServer.new(host, port)
 				client:send(response.toString())
 				client:close()
 			end
-			end)
-	)
+		end)()
 
-		print(
-			'WWW'
-		)
+		return object
 	end
 
 	return object
