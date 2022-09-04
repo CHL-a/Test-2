@@ -3,6 +3,7 @@
 --| Classes
 ---@class HTML
 ---@field tag fun(tn: string?): HTML.tag
+---@field tagsK HTML.tagsK
 ---@field tags HTML.tags
 ---@field tagCollection fun(...: HTML.tag): HTML.tagCollection
 ---@field collections HTML.collections
@@ -22,30 +23,43 @@
 
 ---@alias HTML.tag.type "nested" | "singular"
 
----@class HTML.tags
----@field docHeader HTML.tag
+---@class HTML.tag.constructor.argument
+---@field tagName string
+---@field type HTML.tag.type
 
 ---@class HTML.tagCollection
 ---@field children {[number]: HTML.tag.child}
 ---@field addChild fun(c: HTML.tag.child): HTML.tagCollection
 ---@field addChildren fun(...: HTML.tag.child): HTML.tagCollection
+---@field reset fun(... : HTML.tag.child): HTML.tagCollection
 ---@field toString fun(indent: integer?): string
 
+--- Tag constants
+---@class HTML.tagsK
+---@field docHeader HTML.tag
+
+--- Tag Classes
+---@class HTML.tags
+---@field title fun(s: string): HTML.tags.title
+
+---@class HTML.tags.title : HTML.tag
+---@field setTitle fun(title: string): HTML.tags.title
+
+--- Tag Collection Classes
 ---@class HTML.collections
----@field root fun(...: HTML.tag): HTML.root
+---@field root fun(...: HTML.tag): HTML.collection.root
+---@field discordURLEmbed fun(title: string, description: string, image: string): HTML.collection.discordURLEmbed
 
----@class HTML.tag.constructor.argument
----@field tagName string
----@field type HTML.tag
+---@class HTML.collection.root : HTML.tagCollection
 
-
----@class HTML.root : HTML.tagCollection
-
---| Enum
--- -  @enum 
+---@class HTML.collection.discordURLEmbed: HTML.tagCollection
+---@field setTitle fun(s: string): HTML.collection.discordURLEmbed
+---@field setDescription fun(d: string): HTML.collection.discordURLEmbed
+---@field setImage fun(i: string): HTML.collection.discordURLEmbed
 
 ---@type HTML
 local HTML = {}
+local Static = require('Static')
 
 ---returns html tag superclass
 ---@param tagName string?
@@ -126,20 +140,22 @@ function HTML.tag(tagName)
 				.. (' %s="%s"'):format(i, v)
 		end
 		
+		-- /
+		if object.type == 'nested' and 
+			#object.collection.children == 0 then
+			result = result .. '/'
+		end
+
 		-- >
 		result = result .. '>'
 		
-		if object.type == 'nested' then
-			if type(object.value) == 'string' then
-				result = result .. object.value
-			else
-				for _, tag in next, object.value do
-					result = result
-						.. ('%s\n'):format(tag.toString(indent + 1))
-				end
-			end
-
-			result = result .. ('</%s>\n'):format(tagName)
+		if object.type == 'nested' and
+			#object.collection.children ~= 0 then
+			
+			result = result .. ('%s\n</%s>\n'):format(
+				object.collection.toString(indent + 1),
+				tagName
+			)
 		end
 
 		return result
@@ -175,7 +191,15 @@ function HTML.tagCollection(...)
 		return object
 	end
 	
-	---comment
+	---resets children
+	---@param ... HTML.tag.child
+	---@return HTML.tagCollection
+	object.reset = function(...)
+		Static.table.empty(object.children)
+		return object.addChildren(...)
+	end
+
+	---returns string
 	---@param indent integer?
 	---@return string
 	object.toString = function(indent)
@@ -217,22 +241,102 @@ end
 ---constructor
 ---@param struct HTML.tag.constructor.argument
 function loadHTMLTAG(struct)
+	-- main
 	local result = HTML.tag(struct.tagName)
-
+		.setType(struct.type or 'nested')
 
 	return result
 end
 
+HTML.tagsK = {
+	docHeader = loadHTMLTAG {
+		tagName = '!DOCTYPE html';
+		type = 'singular'
+	};
+}
+
 HTML.tags = {
-	docHeader = HTML.tag'!DOCTYPE html'
+	---@param s string title
+	---@return HTML.tags.title
+	title = function(s)
+		local object = HTML.tag 'title'
+		
+		---sets website title
+		---@param t string
+		---@return HTML.tags.title
+		object.setTitle = function(t)
+			object.collection.reset(t)
+			---@cast object HTML.tags.title
+			return object
+		end
+
+		---@cast object HTML.tags.title
+		return object.setTitle(s)
+	end
 }
 
 HTML.collections = {
+	---root collection
+	---@param ... HTML.tag
+	---@return HTML.tagCollection
 	root = function (...)
 		return HTML.tagCollection(
-			HTML.tags.docHeader,
+			HTML.tagsK.docHeader,
 			...
 		)
+	end;
+
+	---discord url embed
+	---@param t any
+	---@param d any
+	---@param i any
+	---@return HTML.collection.discordURLEmbed
+	discordURLEmbed = function(t, d, i)
+		local titleTag = HTML.tag 'meta'
+			.setAttribute('property', 'og:title')
+		local descriptionTag = HTML.tag 'meta'
+			.setAttribute('property', 'og:description')
+		local imageTag = HTML.tag 'meta'
+			.setAttribute('property', 'og:image')
+		local object = HTML.tagCollection(
+			titleTag,
+			descriptionTag,
+			imageTag,
+			-- temp
+			HTML.tag('meta')
+				.setAttribute('content', '#000508')
+				.setAttribute('data-react-helmet', 'true')
+				.setAttribute('name', 'theme-color')
+		)
+
+		---sets title
+		---@param t string
+		---@return HTML.collection.discordURLEmbed
+		object.setTitle = function (t)
+			titleTag.setAttribute('content', t)
+			---@cast object HTML.collection.discordURLEmbed
+			return object
+		end
+
+		---sets description
+		---@param d string
+		---@return HTML.collection.discordURLEmbed
+		object.setDescription = function (d)
+			descriptionTag.setAttribute('content', d)
+			---@cast object HTML.collection.discordURLEmbed
+			return object
+		end
+		
+		---sets image
+		---@param i string
+		---@return HTML.collection.discordURLEmbed
+		object.setImage = function (i)
+			imageTag.setAttribute('content', i)
+			---@cast object HTML.collection.discordURLEmbed
+			return object
+		end
+		---@cast object HTML.collection.discordURLEmbed
+		return object
 	end
 }
 

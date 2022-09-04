@@ -40,6 +40,7 @@
 ---@class Headers
 ---@field X-Forwarded-For string? ip address from address
 
+
 ---@type WebServer
 local WebServer = {}
 local isLoaded = false
@@ -50,6 +51,7 @@ local Static = require('Static')
 local StringParser = require('StringParser')
 local ReplitDataBase = 
 	require('ReplitDatabase')
+local Enum = require('Enum')
 
 
 function WebServer.new(host, port)
@@ -131,7 +133,8 @@ function WebServer.new(host, port)
 				response.statusCode = 501
 				response.statusMessage = 'not implemented'
 				response.body = 'oops, server did something wrong'
-				response.headers['Content-Type'] = 'text/plain'
+				response.headers['Content-Type'] = 
+					Enum.mimeTypes.txt
 				response.success = false
 				response.httpVersion = request.httpVersion
 

@@ -9,6 +9,7 @@
 ---@field bind fun(url: string): cURL.object
 ---@field serverResponse cURL.ServerResponse.constructor
 ---@field clientRequest cURL.ClientRequest.constructor
+-- -@field mimeTypes {[string]: mimeType}
 
 ---@class cURL.object @can run commands
 ---@field get fun(suffix: string, data: string?, headers: {[string]: any}?): cURL.ServerResponse
@@ -41,6 +42,7 @@
 ---@class cURL.ServerResponse.Headers possibly more headers
 ---@field Content-Length number
 ---@field Content-Type string
+
 
 ---@type cURL
 local cURL = {}
