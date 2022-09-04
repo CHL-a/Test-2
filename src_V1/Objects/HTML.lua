@@ -85,7 +85,7 @@ function HTML.tag(tagName)
 	---@param c HTML.tag | string
 	---@return HTML.tag
 	object.addChild = function(c)
-		object.value.addChild(c)
+		object.collection.addChild(c)
 		return object
 	end
 
@@ -113,14 +113,6 @@ function HTML.tag(tagName)
 	object.setType = function(s)
 		object.type = s
 		return object
-	end
-
-	---value
-	---@param v HTML.tag.child
-	---@return HTML.tag
-	object.setValue = function(v)
-		object.value = v
-		return object.setType('nested')
 	end
 
 	---return html content
