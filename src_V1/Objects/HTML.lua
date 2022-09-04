@@ -152,7 +152,7 @@ function HTML.tag(tagName)
 				end
 			end
 
-			if allStrings then
+			if not allStrings then
 				result = result .. '\n'
 			end
 
