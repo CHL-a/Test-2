@@ -69,7 +69,7 @@ function HTML.tag(tagName)
 	local object = {}
 
 	object.attributes = {}
-	object.type = "singular"
+	object.type = "nested"
 	object.collection = HTML.tagCollection()
 
 	---sets attribute
