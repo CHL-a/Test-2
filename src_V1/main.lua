@@ -7,8 +7,8 @@ local HTML = require('HTML')
 local Enum = require'Enum'
 
 WebServer.onInvalidRequest(function (client, req, res)
-	res.statusCode = 404
-	res.statusMessage = 'Bad request'
+	res.statusCode = 200
+	res.statusMessage = 'OK'
 	res.headers.connection = 'close'
 	res.headers['Content-Type'] =  Enum.mimeTypes.html
 	res.body = HTML.collections.root(
@@ -25,6 +25,7 @@ WebServer.onInvalidRequest(function (client, req, res)
 		)
 	).toString()
 
+	print(res.body)
 end)
 
 -- always last step
