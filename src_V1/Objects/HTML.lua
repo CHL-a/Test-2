@@ -143,9 +143,23 @@ function HTML.tag(tagName)
 		
 		if object.type == 'nested' and
 			#object.collection.children ~= 0 then
+
+			local allStrings = true
+			for _, v in next, object.collection.children do
+				if type(v) ~= 'string' then
+					allStrings = false
+					break
+				end
+			end
+
+			if allStrings then
+				result = result .. '\n'
+			end
+
+			result = result .. object.collection.toString(indent + 1)
 			
-			result = result .. ('%s\n</%s>\n'):format(
-				object.collection.toString(indent + 1),
+
+			result = result .. ('</%s>\n'):format(
 				tagName
 			)
 		end
@@ -279,9 +293,9 @@ HTML.collections = {
 	end;
 
 	---discord url embed
-	---@param t any
-	---@param d any
-	---@param i any
+	---@param t string
+	---@param d string
+	---@param i string
 	---@return HTML.collection.discordURLEmbed
 	discordURLEmbed = function(t, d, i)
 		local titleTag = HTML.tag 'meta'
@@ -328,7 +342,9 @@ HTML.collections = {
 			return object
 		end
 		---@cast object HTML.collection.discordURLEmbed
-		return object
+		return object.setDescription(d)
+			.setImage(i)
+			.setTitle(t)
 	end
 }
 
