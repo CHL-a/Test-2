@@ -70,7 +70,7 @@ function HTML.tag(tagName)
 
 	object.attributes = {}
 	object.type = "singular"
-	object.value = HTML.tagCollection()
+	object.collection = HTML.tagCollection()
 
 	---sets attribute
 	---@param i string
